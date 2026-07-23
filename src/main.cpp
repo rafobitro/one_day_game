@@ -28,6 +28,9 @@ int main(void)
     }
 
   }
+  
+
+    un_init_game();
     CloseWindow();
     return 0;
 }
