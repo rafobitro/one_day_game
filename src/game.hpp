@@ -7,5 +7,7 @@ void ubdate_game();
 void draw_game();
 void draw_background();
 void draw_pipes();
-void run_game();
+bool colison_detection();
+bool run_game();
 void un_init_game();
+

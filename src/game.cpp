@@ -2,7 +2,7 @@
 
 float velocity;
 float gravity;
-Vector2 ballPosition;
+Vector2 player_position;
 Texture2D backgrounds[3];
 Texture2D pipes[3];
 float bg_1_start;
@@ -19,8 +19,10 @@ int pipe_2_gap;
 int pipe_3_gap;
 int pipe_distance;
 int pipe_gap;
+int score;
 
 void init_game(int screenWidth, int screenHeight){
+    score =0;
     pipe_distance =0.4*screenWidth;
     pipe_gap=100;
     pipe_1_start=screenWidth/2;
@@ -38,7 +40,7 @@ void init_game(int screenWidth, int screenHeight){
     pipe_speed = 90;
     velocity = 0;
     gravity = 15;
-    ballPosition = { (float)screenWidth/3, (float)screenHeight/2 };
+    player_position = { (float)screenWidth/3, (float)screenHeight/2 };
 
     Image background_image_1= LoadImage("background_1.png");
     ImageResize(&background_image_1,screenWidth,screenHeight);
@@ -86,7 +88,7 @@ void un_init_game(){
 
 void run_phisics(){
     velocity -= delta_time *  gravity * gravity  * 0.5;
-    ballPosition.y -= velocity *delta_time;
+    player_position.y -= velocity *delta_time;
 }
 
 
@@ -133,9 +135,11 @@ void ubdate_game() {
 void draw_game(){
     BeginDrawing();
     ClearBackground(RAYWHITE);
+
     draw_background();
     draw_pipes();
-    DrawCircleV(ballPosition, 20, MAROON);
+    DrawCircleV(player_position, 20, MAROON);
+    DrawText(TextFormat("Score: %08i", score), 0, 0, 30, GREEN);
     EndDrawing();
 }
 
@@ -171,10 +175,45 @@ void draw_pipes() {
 
 }
 
-void run_game(){
+bool colison_detection(){
+    if(player_position.x>=pipe_1_start && player_position.x<=pipe_1_start+50 ){
+        if(player_position.y<pipe_1_gap*50 ||
+           player_position.y>pipe_1_gap*50+100){
+           //player is dead
+           return false;
+        }
+        else{
+          score++;
+        }
+    }
+    if(player_position.x>=pipe_2_start && player_position.x<=pipe_2_start+50 ){
+        if(player_position.y<pipe_2_gap*50 ||
+           player_position.y>pipe_2_gap*50+100){
+           //player is dead
+           return false;
+        }
+        else{
+          score++;
+        }
+    }
+    if(player_position.x>=pipe_3_start && player_position.x<=pipe_3_start+50 ){
+        if(player_position.y<pipe_3_gap*50 ||
+           player_position.y>pipe_3_gap*50+100){
+           //player is dead
+           return false;
+        }
+        else{
+          score++;
+        }
+    }
+    return true;
+}
+
+bool run_game(){
     delta_time=GetFrameTime();
     ubdate_game();
     draw_game();
+    return colison_detection();
 }
 
 
