@@ -51,9 +51,13 @@ void init_game(int screenWidth, int screenHeight){
     Image pipe = LoadImage("pipe.png");
     ImageResize(&pipe,50,50);
     Image pipe_head = LoadImage("pipe_head.png");
-    ImageResize(&pipe,50,50);
-    //Image pipe_head_reverse = pipe_head;
-  
+    ImageResize(&pipe_head,50,50);
+
+    ImageColorReplace(&pipe,Color{0,255,0,255},Color{0,0,0,0,});
+    ImageColorReplace(&pipe_head,Color{0,255,0,255},Color{0,0,0,0,});
+
+    pipes[2] = LoadTextureFromImage(pipe_head);
+    ImageRotate(&pipe_head,180);
 
     backgrounds[0] = LoadTextureFromImage(background_image_1);
     backgrounds[1] = LoadTextureFromImage(background_image_2);
@@ -61,7 +65,6 @@ void init_game(int screenWidth, int screenHeight){
     
     pipes[0] = LoadTextureFromImage(pipe);
     pipes[1] = LoadTextureFromImage(pipe_head);
-   // pipes[2] = LoadTextureFromImage(pipe_head_reverse);
     
     
     UnloadImage(background_image_1);
@@ -69,8 +72,7 @@ void init_game(int screenWidth, int screenHeight){
     UnloadImage(background_image_3);
 
     UnloadImage(pipe);
-//    UnloadImage(pipe_head);
-  //  UnloadImage(pipe_head_reverse);
+    UnloadImage(pipe_head);
 
 }
 
@@ -82,7 +84,7 @@ void un_init_game(){
 
   UnloadTexture(pipes[0]);
   UnloadTexture(pipes[1]);
- // UnloadTexture(pipes[2]);
+  UnloadTexture(pipes[2]);
 
 }
 
@@ -150,24 +152,38 @@ void draw_background() {
 
 void draw_pipes() {
     for(int i=0;i<10;i++){
-      if(i==pipe_1_gap){
-        i++;
+      if(i==pipe_1_gap - 1){
+        DrawTexture(pipes[2],pipe_1_start,i*50 -1,WHITE);
+
+        DrawTexture(pipes[1],pipe_1_start-1,(i+3)*50+1 ,WHITE);
+        
+        i+=3;
         continue;
       }
       DrawTexture(pipes[0],pipe_1_start,i*50,WHITE);
     }
     
     for(int i=0;i<10;i++){
-      if(i==pipe_2_gap){
-        i++;
+      if(i==pipe_2_gap-1){
+        
+        DrawTexture(pipes[2],pipe_2_start,i*50 ,WHITE);
+
+        DrawTexture(pipes[1],pipe_2_start-1,(i+3)*50+1 ,WHITE);
+        
+        i+=3;
         continue;
       }
       DrawTexture(pipes[0],pipe_2_start,i*50,WHITE);
     }
     
     for(int i=0;i<10;i++){
-      if(i==pipe_3_gap){
-        i++;
+      if(i==pipe_3_gap-1){
+        
+        DrawTexture(pipes[2],pipe_3_start,i*50 ,WHITE);
+
+        DrawTexture(pipes[1],pipe_3_start-1,(i+3)*50+1 ,WHITE);
+        
+        i+=3;
         continue;
       }
       DrawTexture(pipes[0],pipe_3_start,i*50,WHITE);
