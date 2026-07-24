@@ -6,5 +6,6 @@ void run_phisics();
 void ubdate_game();
 void draw_game();
 void draw_background();
+void draw_pipes();
 void run_game();
 void un_init_game();

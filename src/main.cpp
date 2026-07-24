@@ -1,7 +1,7 @@
 #include "game.hpp"
 #include "menu.hpp"
 
-//const float ASPECT_RATIO = 16/9;
+//const float ASPECT_RATIO = 9/16;
 const int screenWidth = 800;
 const int screenHeight = 450;
 
