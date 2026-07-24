@@ -13,7 +13,7 @@ enum Program_Mode{
 
 int main(void)
 {
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - input keys");
+    InitWindow(screenWidth, screenHeight, "less then (or more then) 1 day game");
     Program_Mode program_state=game;
 
 	SetTargetFPS(60);
