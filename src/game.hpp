@@ -10,4 +10,5 @@ void draw_pipes();
 bool colison_detection();
 bool run_game();
 void un_init_game();
+bool score_menue();
 

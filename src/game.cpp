@@ -1,7 +1,8 @@
 #include "game.hpp"
-
+#include <iostream>
 float velocity;
 float gravity;
+float jump_velocity;
 Vector2 player_position;
 Texture2D backgrounds[3];
 Texture2D pipes[3];
@@ -20,26 +21,32 @@ int pipe_3_gap;
 int pipe_distance;
 int pipe_gap;
 int score;
+int hiscore=0;
+
+Vector2 mousePoint;
+
 
 void init_game(int screenWidth, int screenHeight){
-    score =0;
+    Vector2 mousePoint = {0,0};
+    score = 0; 
     pipe_distance =0.4*screenWidth;
     pipe_gap=100;
-    pipe_1_start=screenWidth/2;
+    pipe_1_start=screenWidth;
     pipe_2_start=pipe_1_start+pipe_distance;
     pipe_3_start=pipe_2_start+pipe_distance;
     bg_1=GetRandomValue(0,2);
     bg_2=GetRandomValue(0,2);
-    pipe_1_gap= GetRandomValue(1,7);
-    pipe_2_gap= GetRandomValue(1,7);
-    pipe_3_gap= GetRandomValue(1,7);
+    pipe_1_gap= GetRandomValue(1,6);
+    pipe_2_gap= GetRandomValue(1,6);
+    pipe_3_gap= GetRandomValue(1,6);
 
     bg_1_start = 0;
     bg_2_start = screenWidth;
-    bg_speed = 60;
-    pipe_speed = 90;
+    bg_speed = 0;
+    pipe_speed = 0;
     velocity = 0;
-    gravity = 15;
+    gravity = 30;
+    jump_velocity= 210;
     player_position = { (float)screenWidth/3, (float)screenHeight/2 };
 
     Image background_image_1= LoadImage("background_1.png");
@@ -96,6 +103,8 @@ void run_phisics(){
 
 void ubdate_game() {
     float bg_width = (float)backgrounds[0].width;
+    bg_speed=90+(score*0.03);
+    pipe_speed=120+(score*0.05);
 
     bg_1_start -= delta_time * bg_speed;
     bg_2_start -= delta_time * bg_speed;
@@ -116,20 +125,20 @@ void ubdate_game() {
     
     if(pipe_1_start <= -100){
       pipe_1_start+= pipe_distance*3;
-      pipe_1_gap= GetRandomValue(1,7);
+      pipe_1_gap= GetRandomValue(1,6);
     }
 
     if(pipe_2_start <= -100){
       pipe_2_start+= pipe_distance*3;
-      pipe_2_gap= GetRandomValue(1,7);
+      pipe_2_gap= GetRandomValue(1,6);
     }
 
     if(pipe_3_start <= -100){
       pipe_3_start+= pipe_distance*3;
-      pipe_3_gap= GetRandomValue(1,7);
+      pipe_3_gap= GetRandomValue(1,6);
     }
 
-    if (IsKeyPressed(KEY_SPACE)) velocity = 120;
+    if (IsKeyPressed(KEY_SPACE)) velocity = jump_velocity;
     run_phisics();
 }
 
@@ -137,7 +146,6 @@ void ubdate_game() {
 void draw_game(){
     BeginDrawing();
     ClearBackground(RAYWHITE);
-
     draw_background();
     draw_pipes();
     DrawCircleV(player_position, 20, MAROON);
@@ -196,7 +204,7 @@ bool colison_detection(){
         if(player_position.y<pipe_1_gap*50 ||
            player_position.y>pipe_1_gap*50+100){
            //player is dead
-           return false;
+           return true;
         }
         else{
           score++;
@@ -206,7 +214,7 @@ bool colison_detection(){
         if(player_position.y<pipe_2_gap*50 ||
            player_position.y>pipe_2_gap*50+100){
            //player is dead
-           return false;
+           return true;
         }
         else{
           score++;
@@ -216,20 +224,63 @@ bool colison_detection(){
         if(player_position.y<pipe_3_gap*50 ||
            player_position.y>pipe_3_gap*50+100){
            //player is dead
-           return false;
+           return true;
         }
         else{
           score++;
         }
     }
-    return true;
+    return false;
 }
 
 bool run_game(){
     delta_time=GetFrameTime();
     ubdate_game();
     draw_game();
-    return colison_detection();
+    if(colison_detection()){
+      hiscore=std::max(score,hiscore);
+      return false;
+    }
+    return true;
 }
 
+bool score_menue(){
+    mousePoint=GetMousePosition();
+    
+
+
+
+
+
+    BeginDrawing();
+
+    //DrawRectangle(100, 50, 600, 350, GRAY);
+    if(score==hiscore)
+        DrawText(TextFormat("NEW RECORD Score: %08i", score), 200, 80, 20, BLUE);
+    else
+        DrawText(TextFormat("Score: %08i", score), 200, 80, 20, RED);
+        DrawText(TextFormat("HiScore: %08i", hiscore), 200, 120, 20, GREEN);
+        Rectangle replay_bt= {200,200,200,50};
+        DrawRectangleRec(replay_bt ,GREEN);
+        DrawText("Press to replay    or pres ENTER to replay ",220,215, 20,WHITE);
+        if (CheckCollisionPointRec(mousePoint, replay_bt) ){
+                     
+            DrawRectangleRec(replay_bt ,LIME);
+            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                return true;
+            
+        }
+        if(IsKeyPressed(KEY_ENTER))
+            return true;
+        
+
+    EndDrawing();
+    
+
+
+
+
+    return false;
+    EndDrawing();
+}
 
